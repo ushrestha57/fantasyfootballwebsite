@@ -7,7 +7,7 @@ function Login() {
   const [password, setPassword] = useState('')
   const history = useHistory();
   const onSubmitClick = (e)=>{
-    e.preventDefault()
+    e.preventDefault();
     console.log("You pressed login")
     let opts = {
       'username': username,
@@ -21,7 +21,8 @@ function Login() {
         if (response.data.access_token){
           localStorage.setItem('access_token',response.data.access_token);
           localStorage.setItem('refresh_token',response.data.refresh_token);
-          history.push("/advice")      
+          history.push("/advice");
+          window.location.reload(true);  
         }
         else {
           return alert("Invalid credentials");

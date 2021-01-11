@@ -6,6 +6,7 @@ function Advice(){
     const access_token = localStorage.getItem("access_token");
     const history = useHistory();
   useEffect(() => {
+
     axios.get("http://127.0.0.1:5000/api/advice",
     {
         headers: {
