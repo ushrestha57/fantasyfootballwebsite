@@ -26,10 +26,6 @@ def register():
     new_user = User(
         username = data['username'],
         password = bcrypt.generate_password_hash(data['password']),
-        league_id = data['league_id'],
-        s2 = data['s2'],
-        swid = data['swid'],
-        teamName = data['teamName']
     )
     try:
         db.session.add(new_user)
@@ -74,6 +70,18 @@ def advice():
     else:
         return {"msg" : "Unable to access protected endpoint"},401
 
+@app.route('/api/team', methods = ["GET"])
+def team():
+    if request.headers.get('Authorization'):
+        jti = request.headers.get('Authorization')
+        jti = jti[7:(len(jti))]
+        if is_jti_blacklisted(jti):
+            return {"msg": "Expired/Invalid JWT"},401
+        else:
+            return {"placeholder": "holder"}
+            
+    else:
+        return {"msg" : "Unable to access protected endpoint"},401
 
 
 
@@ -92,11 +100,11 @@ def loggedin():
         jti = request.headers.get('Authorization')
         jti = jti[7:(len(jti))]   
         if is_jti_blacklisted(jti):
-            return { "msg" : "Not logged in!"},401
+            return { "msg" : "False"},401
         else:
-            return {"msg": "Logged in"}
+            return {"msg": "True"}
     else:
-        return {"msg" : "Not logged in"},401
+        return {"msg" : "False"},401
 
 @app.route('/api/logout', methods = ["POST"])
 def logout():

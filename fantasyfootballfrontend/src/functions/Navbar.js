@@ -19,7 +19,7 @@ function Navbar() {
           <Link to="/register" className="nav-link">Register</Link>
           </li>
           <li className = "navbar-item">
-          <Link to = "/profile" className = "nav-link">Profile</Link>
+          <Link to = "/profile" className = "nav-link">Team</Link>
           </li>
           <li className = "navbar-item">
           <Link to = "/advice" className = "nav-link">Weekly Advice</Link>
@@ -34,7 +34,7 @@ function Buttons()
 {
     const access_token = localStorage.getItem("access_token");
     const history = useHistory();
-    let renderLogin = true
+    let renderLogin = true;
     useEffect(() =>
     {
         axios.get('http://127.0.0.1:5000/api/loggedin', 
@@ -45,19 +45,12 @@ function Buttons()
             }
         })
         .then((response) => {
-            console.log(response);
-            if(response.msg === "Logged in")
-            {
-                renderLogin = false;
-            }
-            else
-            {
-                renderLogin = true;
-            }
+            renderLogin = false;
         }).catch((err) => {
             renderLogin = true;
         });
     },[])
+    console.log(renderLogin)
     if(renderLogin)
     {
         return <LoginRegister/>

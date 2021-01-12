@@ -1,14 +1,15 @@
 from fantasyfootballbackend import db
 from fantasyfootballbackend import bcrypt
 
+owners = db.Table('owners',
+    db.Column('id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('name', db.String(100), db.ForeignKey('player.name'))
+)
 class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(20),unique = True)
     password = db.Column(db.String(20))
-    league_id = db.Column(db.Text)
-    s2 = db.Column(db.Text)
-    swid = db.Column(db.Text)
-    teamName = db.Column(db.Text)
+    players = db.relationship('Player', secondary = owners)
 
     def save_to_db(self):
         db.session.add(self)
@@ -35,6 +36,10 @@ class User(db.Model):
             return {'message': '{} row(s) deleted'.format(num_rows_deleted)}
         except:
             return {'message': 'Something went wrong'}
+class Player(db.Model):
+    name = db.Column(db.String(100), primary_key = True)
+    position = db.Column(db.String(10))
+    rank = db.Column(db.Integer)
 
 class RevokedToken(db.Model):
     __tablename__ = 'revoked_tokens'
