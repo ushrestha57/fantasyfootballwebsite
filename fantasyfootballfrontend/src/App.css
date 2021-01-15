@@ -9,3 +9,8 @@
     border-radius: 20px;  
     
 }
+.alert.alert-danger
+{
+    position: relative;
+    top: 30px
+}

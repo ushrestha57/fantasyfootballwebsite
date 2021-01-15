@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from "axios";
 import '../App.css';
@@ -19,7 +19,7 @@ function Navbar() {
           <Link to="/register" className="nav-link">Register</Link>
           </li>
           <li className = "navbar-item">
-          <Link to = "/profile" className = "nav-link">Team</Link>
+          <Link to = "/team" className = "nav-link">Team</Link>
           </li>
           <li className = "navbar-item">
           <Link to = "/advice" className = "nav-link">Weekly Advice</Link>
@@ -32,9 +32,9 @@ function Navbar() {
 };
 function Buttons()
 {
+    let [renderLogin, setRenderLogin] = useState('');   
     const access_token = localStorage.getItem("access_token");
     const history = useHistory();
-    let renderLogin = true;
     useEffect(() =>
     {
         axios.get('http://127.0.0.1:5000/api/loggedin', 
@@ -45,9 +45,9 @@ function Buttons()
             }
         })
         .then((response) => {
-            renderLogin = false;
+            setRenderLogin(false);
         }).catch((err) => {
-            renderLogin = true;
+            setRenderLogin(true);
         });
     },[])
     console.log(renderLogin)
@@ -75,7 +75,9 @@ function Logout()
             }
         })
         .then((response) => {
+
             history.push('/');
+            window.location.reload(true); 
         }).catch((err) => {
             alert("Unable to log out! You are probably already logged out!");
             

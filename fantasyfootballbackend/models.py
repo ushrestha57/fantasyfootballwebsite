@@ -1,8 +1,9 @@
 from fantasyfootballbackend import db
 from fantasyfootballbackend import bcrypt
+import json
 
 owners = db.Table('owners',
-    db.Column('id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('username', db.String, db.ForeignKey('user.username')),
     db.Column('name', db.String(100), db.ForeignKey('player.name'))
 )
 class User(db.Model):
@@ -14,7 +15,17 @@ class User(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
-    
+    def get_players(self):
+        playerList = []
+        for i in range(len(self.players)):
+            playerList.append({
+                "name" : self.players[i].name,
+                "position" : self.players[i].position,
+                "rank" : self.players[i].rank
+            })
+        return playerList
+
+
     @classmethod 
     def find_by_username(cls,username):
         return cls.query.filter_by(username = username).first()

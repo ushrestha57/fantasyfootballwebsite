@@ -5,6 +5,7 @@ import axios from "axios";
 function Register() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [invalidRegister, setInvalidRegister] = useState('')
 
   const history = useHistory();
   const onSubmitClick = (e)=>{
@@ -18,11 +19,21 @@ function Register() {
       method: 'POST',
       body: JSON.stringify(opts)
     }).then(response => {
-        console.log(response)
-        localStorage.setItem('access_token',response.data.access_token);
-        localStorage.setItem('refresh_token',response.data.refresh_token);
-        history.push("/advice")      
-        
+        if(response.data.access_token)
+        {
+            localStorage.setItem('access_token',response.data.access_token);
+            localStorage.setItem('refresh_token',response.data.refresh_token);
+            setInvalidRegister(false)
+            history.push("/advice")
+            window.location.reload(true);
+        }
+        else
+        {
+            setPassword('')
+            setUsername('')
+            setInvalidRegister(true)
+            
+        }      
       })
   }
   return (
@@ -48,6 +59,7 @@ function Register() {
           Submit
         </Button>
       </Form>
+      {invalidRegister && <div class="alert alert-danger" role="alert">Username taken!</div>}
     </div>
   )
 }

@@ -1,9 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 import json
 from fantasyfootballbackend import app,bcrypt,db,jwt
-from fantasyfootballbackend.models import User,RevokedToken, is_jti_blacklisted
-from fantasyfootballbackend.league import getLeagueData
-from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+from fantasyfootballbackend.models import User,RevokedToken, is_jti_blacklisted, Player
+from flask_jwt_extended import (create_access_token, get_jti,  create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 
 @app.before_first_request
 def create_db():
@@ -15,7 +14,7 @@ def create_db():
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
-    return RevokedToken.is_jti_blacklisted(jti)
+    return is_jti_blacklisted(jti)
 
 @app.route('/api/register', methods = ["POST"])
 def register():
@@ -58,6 +57,7 @@ def login():
         return {'message': 'Invalid credentials'}
 
 @app.route('/api/advice', methods = ["GET"])
+@jwt_required
 def advice():
     if request.headers.get('Authorization'):
         jti = request.headers.get('Authorization')
@@ -70,7 +70,8 @@ def advice():
     else:
         return {"msg" : "Unable to access protected endpoint"},401
 
-@app.route('/api/team', methods = ["GET"])
+@app.route('/api/team', methods = ["GET", "POST"])
+@jwt_required
 def team():
     if request.headers.get('Authorization'):
         jti = request.headers.get('Authorization')
@@ -78,10 +79,38 @@ def team():
         if is_jti_blacklisted(jti):
             return {"msg": "Expired/Invalid JWT"},401
         else:
-            return {"placeholder": "holder"}
-            
+            user = User.query.filter_by(username = get_jwt_identity()).first()
+            if request.method == "GET":
+                return {"list" : user.get_players()}
+
+            elif request.method == "POST":
+                added_player = Player(request.get_json())
+                
     else:
         return {"msg" : "Unable to access protected endpoint"},401
+
+@app.route('/api/players', methods = ["GET","POST","DELETE"])
+@jwt_required
+def players():
+    if request.headers.get('Authorization'):
+        jti = request.headers.get('Authorization')
+        jti = jti[7:(len(jti))]
+        if is_jti_blacklisted(jti):
+            return {"msg": "Expired/Invalid JWT"},401
+        else:
+            if request.method == "GET":
+                playerList = []
+                for player in Player.query.all():
+                    playerList.append({
+                        "name" : player.name,
+                        "position" : player.position,
+                        "rank" : player.rank
+                    })
+                return {"players": playerList}
+
+            elif request.method == "POST":
+                added_player = Player(request.get_json())
+                
 
 
 

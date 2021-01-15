@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, setState } from "react";
 import {Form, Button } from 'reactstrap';
 import { useHistory} from 'react-router-dom';
+import ReactDOM from 'react-dom';
 import axios from "axios";
 function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [invalidLogin, setInvalidLogin] = useState('')
   const history = useHistory();
   const onSubmitClick = (e)=>{
     e.preventDefault();
@@ -21,11 +23,14 @@ function Login() {
         if (response.data.access_token){
           localStorage.setItem('access_token',response.data.access_token);
           localStorage.setItem('refresh_token',response.data.refresh_token);
+          setInvalidLogin(false)
           history.push("/advice");
           window.location.reload(true);  
         }
         else {
-          return alert("Invalid credentials");
+            setPassword('')
+            setInvalidLogin(true)
+            
         }
       })
   }
@@ -61,7 +66,9 @@ function Login() {
           Submit
         </Button>
       </Form>
+      {invalidLogin && <div class="alert alert-danger" role="alert">Invalid Login Credentials!</div>}
     </div>
   )
 }
+
 export default Login;
