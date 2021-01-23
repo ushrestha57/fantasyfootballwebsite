@@ -7,7 +7,7 @@ const ProtectedRoute = ({
   component: Component,
   ...rest
 }) => {
-    const [valid,setValid] = useState(null)
+    const [valid,setValid] = useState(true)
     const access_token = localStorage.getItem("access_token");
     const history = useHistory();
     useEffect(() => {
