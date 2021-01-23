@@ -59,32 +59,19 @@ def login():
 @app.route('/api/advice', methods = ["GET"])
 @jwt_required
 def advice():
-    if request.headers.get('Authorization'):
-        jti = request.headers.get('Authorization')
-        jti = jti[7:(len(jti))]
-        if is_jti_blacklisted(jti):
-            return {"msg": "Expired/Invalid JWT"},401
-        else:
-            return {"placeholder": "holder"}
+    return {"placeholder": "holder"}
             #return getLeagueData(User.find_by_username(get_jwt_identity()))
-    else:
-        return {"msg" : "Unable to access protected endpoint"},401
+
 
 @app.route('/api/team', methods = ["GET", "POST"])
 @jwt_required
 def team():
-    if request.headers.get('Authorization'):
-        jti = request.headers.get('Authorization')
-        jti = jti[7:(len(jti))]
-        if is_jti_blacklisted(jti):
-            return {"msg": "Expired/Invalid JWT"},401
-        else:
-            user = User.query.filter_by(username = get_jwt_identity()).first()
-            if request.method == "GET":
-                return {"list" : user.get_players()}
+    user = User.query.filter_by(username = get_jwt_identity()).first()
+    if request.method == "GET":
+        return {"list" : user.get_players()}
 
-            elif request.method == "POST":
-                added_player = Player(request.get_json())
+    elif request.method == "POST":
+        added_player = Player(request.get_json())
                 
     else:
         return {"msg" : "Unable to access protected endpoint"},401
@@ -92,24 +79,18 @@ def team():
 @app.route('/api/players', methods = ["GET","POST","DELETE"])
 @jwt_required
 def players():
-    if request.headers.get('Authorization'):
-        jti = request.headers.get('Authorization')
-        jti = jti[7:(len(jti))]
-        if is_jti_blacklisted(jti):
-            return {"msg": "Expired/Invalid JWT"},401
-        else:
-            if request.method == "GET":
-                playerList = []
-                for player in Player.query.all():
-                    playerList.append({
-                        "name" : player.name,
-                        "position" : player.position,
-                        "rank" : player.rank
-                    })
-                return {"players": playerList}
+    if request.method == "GET":
+        playerList = []
+        for player in Player.query.all():
+            playerList.append({
+                "name" : player.name,
+                "position" : player.position,
+                "rank" : player.rank
+            })
+        return {"players": playerList}
 
-            elif request.method == "POST":
-                added_player = Player(request.get_json())
+    elif request.method == "POST":
+        added_player = Player(request.get_json())
                 
 
 
@@ -125,6 +106,7 @@ def refresh():
 
 @app.route('/api/loggedin', methods = ["GET"])
 def loggedin():
+    print(request)
     if request.headers.get('Authorization'):
         jti = request.headers.get('Authorization')
         jti = jti[7:(len(jti))]   

@@ -67,8 +67,6 @@ function Team(){
         setData(response.data.list)
     }).catch(err =>
     {
-        history.push("/login");
-        alert("Unauthorized access to protected endpoint");
         console.log(err)
     })
   }, [])  

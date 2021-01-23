@@ -17,8 +17,6 @@ function Advice(){
         setMessage(response.data);
     }).catch(err =>
     {
-        history.push("/login");
-        alert("Unauthorized access to protected endpoint");
         console.log(err)
     })
   }, [])  

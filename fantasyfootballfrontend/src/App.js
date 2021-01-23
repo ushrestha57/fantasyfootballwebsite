@@ -12,6 +12,7 @@ import Register from "./functions/Register";
 import Login from "./functions/Login";
 import Team from "./functions/Team";
 import Advice from "./functions/Advice";
+import ProtectedRoute from "./functions/ProtectedRoute"
 export default function App() {
   return (
     <Router>
@@ -20,9 +21,9 @@ export default function App() {
       <br/>
       <Route path="/" exact component={Home} />
       <Route path="/login" component={Login} />
-      <Route path="/team" component={Team} />
       <Route path="/register" component={Register} />
-       <Route path="/advice" component={Advice} />
+      <ProtectedRoute exact path="/team" component={Team} />
+      <ProtectedRoute exact path="/advice" component={Advice} />
       </div>
     </Router>
   );
